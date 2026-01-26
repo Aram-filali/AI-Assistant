@@ -1,0 +1,111 @@
+version: '3.8'
+
+services:
+  # 🐘 PostgreSQL Service
+  postgres:
+    image: postgres:16-alpine
+    container_name: ai-sales-postgres
+    restart: unless-stopped
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: ai_sales_db
+      POSTGRES_USER: ai_sales_user
+      POSTGRES_PASSWORD: ai_sales_2024_secure
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - ai_sales_postgres_data:/var/lib/postgresql/data
+      - ./backend/scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+      - ./backend/scripts/postgresql.conf:/etc/postgresql/postgresql.conf
+    command: ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ai_sales_user -d ai_sales_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ai_sales_network
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+
+  # 🔴 Redis Service
+  redis:
+    image: redis:7-alpine
+    container_name: ai-sales-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - ai_sales_redis_data:/data
+      - ./backend/scripts/redis.conf:/usr/local/etc/redis/redis.conf
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "redis_password_2024", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ai_sales_network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  # 🛠️ pgAdmin (Database Management)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: ai-sales-pgadmin
+    restart: unless-stopped
+    profiles: ["tools"]
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGADMIN_CONFIG_SERVER_MODE: 'True'
+    volumes:
+      - ai_sales_pgadmin_data:/var/lib/pgadmin
+      - ./backend/scripts/pgadmin-servers.json:/pgadmin4/servers.json
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ai_sales_network
+
+  # ⚡ Redis Commander (Redis Management)
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: ai-sales-redis-commander
+    restart: unless-stopped
+    profiles: ["tools"]
+    ports:
+      - "8081:8081"
+    environment:
+      REDIS_HOSTS: "local:redis:6379:0:redis_password_2024"
+      HTTP_USER: admin
+      HTTP_PASSWORD: admin123
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - ai_sales_network
+
+networks:
+  ai_sales_network:
+    driver: bridge
+    name: ai_sales_network
+
+volumes:
+  ai_sales_postgres_data:
+    driver: local
+    name: ai_sales_postgres_data
+  ai_sales_redis_data:
+    driver: local
+    name: ai_sales_redis_data
+  ai_sales_pgadmin_data:
+    driver: local
+    name: ai_sales_pgadmin_data
