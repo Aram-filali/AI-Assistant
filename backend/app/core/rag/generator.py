@@ -18,8 +18,9 @@ class RAGGenerator:
         self.base_url = settings.OPENROUTER_BASE_URL
         self.model = settings.OPENROUTER_MODEL
         
+        # API key is optional - will fail only if used without it
         if not self.api_key:
-            raise ValueError("OPENROUTER_API_KEY not configured")
+            logger.warning("⚠️  OPENROUTER_API_KEY not configured - LLM generation will fail if used")
     
     async def generate_response(
         self,

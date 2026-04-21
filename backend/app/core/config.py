@@ -27,7 +27,7 @@ class Settings(BaseSettings):
     REDIS_MAX_CONNECTIONS: int = 50
     
     # === OpenRouter Config (au lieu d'OpenAI) ===
-    OPENROUTER_API_KEY: str
+    OPENROUTER_API_KEY: str | None = None
     OPENROUTER_BASE_URL: str = "https://openrouter.ai/api/v1"
     OPENROUTER_MODEL: str = "openai/gpt-4o-mini"  # Ou "anthropic/claude-3-sonnet"
     
@@ -44,8 +44,8 @@ class Settings(BaseSettings):
     TOP_K_RESULTS: int = 5
     
     # Email
-    RESEND_API_KEY: str
-    FROM_EMAIL: str
+    RESEND_API_KEY: str | None = None
+    FROM_EMAIL: str | None = None
     EMAIL_RESET_TOKEN_EXPIRE_HOURS: int = 1
     
     # CRM Integrations
