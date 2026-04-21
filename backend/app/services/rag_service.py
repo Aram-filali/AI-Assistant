@@ -47,9 +47,10 @@ class RAGService:
     
     def __init__(self):
         """Initialize RAG components and load persisted FAISS index"""
-        self.embedder = get_embedder()              # Sentence Transformers model
-        self.retriever = semantic_retriever         # FAISS + semantic search
-        self.generator = rag_generator              # GPT-4 response generation
+        # Defer embedder initialization - will load on first use
+        self.embedder = None
+        self.retriever = semantic_retriever
+        self.generator = rag_generator
         
         # Load FAISS index from disk if available (production persistence)
         try:
@@ -57,6 +58,13 @@ class RAGService:
             logger.info("✅ FAISS index loaded from disk")
         except Exception as e:
             logger.warning(f"⚠️ FAISS index not found - will create new: {e}")
+    
+    def _ensure_embedder(self):
+        """Lazy initialize embedder on first use"""
+        if self.embedder is None:
+            logger.info("Loading embedder model...")
+            self.embedder = get_embedder()
+            logger.info("✅ Embedder ready")
     
     async def add_document(
         self,
@@ -80,6 +88,7 @@ class RAGService:
         Raises:
             Exception: File load, embedding, or indexing errors
         """
+        self._ensure_embedder()
         try:
             # 1. Load document
             logger.info(f"Loading document: {file_path}")
@@ -158,6 +167,7 @@ class RAGService:
         Returns:
             Created Document object
         """
+        self._ensure_embedder()
         try:
             # 1. Load from URL
             logger.info(f"Fetching URL: {url}")
@@ -384,6 +394,7 @@ class RAGService:
         Args:
             db: Database session
         """
+        self._ensure_embedder()
         try:
             logger.info("Rebuilding FAISS index...")
             
@@ -449,6 +460,7 @@ class RAGService:
     
     def get_stats(self) -> Dict:
         """Get RAG system statistics"""
+        self._ensure_embedder()
         return {
             'faiss': faiss_manager.get_stats(),
             'embedding_model': self.embedder.model_name,
@@ -456,20 +468,5 @@ class RAGService:
         }
 
 
-# Lazy-loaded global instance (avoids blocking at startup)
-_rag_service_instance = None
-
-def get_rag_service() -> RAGService:
-    """Get or create RAG service singleton (lazy loading)"""
-    global _rag_service_instance
-    if _rag_service_instance is None:
-        logger.info("Initializing RAG Service (lazy loading)...")
-        _rag_service_instance = RAGService()
-    return _rag_service_instance
-
-# Backward-compatible proxy - acts like the service
-class _RAGServiceProxy:
-    def __getattr__(self, name):
-        return getattr(get_rag_service(), name)
-
-rag_service = _RAGServiceProxy()
+# Global instance (init is fast now - only loads embedder on first use)
+rag_service = RAGService()

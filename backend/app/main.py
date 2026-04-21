@@ -13,6 +13,7 @@ from contextlib import asynccontextmanager
 import logging
 
 from app.core.config import settings
+from app.api import auth, chat, knowledge, actions, admin
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -28,14 +29,6 @@ async def lifespan(app: FastAPI):
     Shutdown: Clean up resources (save indices, close connections)
     """
     logger.info("🚀 Starting AI Sales Assistant...")
-    # Import routers AFTER app creation to avoid blocking healthcheck
-    from app.api import auth, chat, knowledge, actions, admin
-    app.include_router(auth.router)
-    app.include_router(chat.router)
-    app.include_router(knowledge.router)
-    app.include_router(actions.router, prefix="/actions")
-    app.include_router(admin.router)
-    logger.info("✅ API routes loaded")
     yield
     # Shutdown logic: Save FAISS indices, close DB connections
     logger.info("👋 Shutting down...")
@@ -60,6 +53,14 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ==================== API Routes ====================
+# Modular endpoint organization by feature
+app.include_router(auth.router)          # Authentication & JWT tokens
+app.include_router(chat.router)           # Conversations & messages
+app.include_router(knowledge.router)      # Knowledge base management
+app.include_router(actions.router, prefix="/actions")  # Custom actions
+app.include_router(admin.router)          # Admin operations
 
 
 @app.get("/")
