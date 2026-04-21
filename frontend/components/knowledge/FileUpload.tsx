@@ -34,7 +34,8 @@ export default function FileUpload({ knowledgeBaseId, onSuccess }: FileUploadPro
     try {
       // Note: We use raw fetch here because apiFetch handles headers automatically but for FormData we might need to be careful with Content-Type
       const token = localStorage.getItem('auth_token');
-      const response = await fetch(`http://localhost:8000/knowledge/documents/upload`, {
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+      const response = await fetch(`${API_BASE}/knowledge/documents/upload`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

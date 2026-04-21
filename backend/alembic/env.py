@@ -29,7 +29,9 @@ db_url = settings.DATABASE_URL_SYNC
 if not db_url:
     # Fallback hack: try to convert async url to sync if DATABASE_URL_SYNC is missing
     db_url = settings.DATABASE_URL.replace("+asyncpg", "")
+    print(f"⚠️  DATABASE_URL_SYNC not set. Using converted DATABASE_URL: {db_url[:50]}...")
 
+print(f"✅ Using database URL for migrations: {db_url[:80]}...")
 config.set_main_option("sqlalchemy.url", db_url)
 
 
@@ -85,6 +87,10 @@ def run_migrations_online() -> None:
 
 
 if context.is_offline_mode():
+    print("📋 Running Alembic migrations in OFFLINE mode...")
     run_migrations_offline()
 else:
+    print("📋 Running Alembic migrations in ONLINE mode...")
     run_migrations_online()
+    
+print("✅ Alembic migration run completed!")

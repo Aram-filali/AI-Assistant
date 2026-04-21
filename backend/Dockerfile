@@ -18,9 +18,12 @@ COPY --from=builder /root/.local /root/.local
 # Copy application code
 COPY . .
 
+# Make the migration script executable
+RUN chmod +x migrate.sh
+
 # Set PATH
 ENV PATH=/root/.local/bin:$PATH
 ENV PYTHONUNBUFFERED=1
 
-# Run migrations and start server (keep as root for alembic permissions)
-CMD ["sh", "-c", "alembic upgrade head 2>&1 && uvicorn app.main:app --host 0.0.0.0 --port 8000"]
+# Run migrations and start server
+CMD ["./migrate.sh"]

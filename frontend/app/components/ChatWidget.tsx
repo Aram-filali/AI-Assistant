@@ -58,7 +58,8 @@ export default function ChatWidget() {
 
     try {
       // 2. Send message to backend API
-      const response = await fetch('http://localhost:8000/chat/ask-public', {
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+      const response = await fetch(`${API_BASE}/chat/ask-public`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -99,7 +100,8 @@ export default function ChatWidget() {
     setLoading(true);
     try {
       // Send lead information to backend for CRM integration
-      const response = await fetch(`http://localhost:8000/admin/leads/${leadInfo.lead_id}/name`, {
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+      const response = await fetch(`${API_BASE}/admin/leads/${leadInfo.lead_id}/name`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
