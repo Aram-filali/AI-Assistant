@@ -4,7 +4,7 @@
             "Name": "AI Sales Assistant DB",
             "Group": "Servers",
             "Host": "ai-sales-postgres",
-            "Port": 5433,
+            "Port": 5432,
             "MaintenanceDB": "ai_sales_db",
             "Username": "ai_sales_user",
             "SSLMode": "prefer",

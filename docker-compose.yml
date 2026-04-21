@@ -1,13 +1,75 @@
 version: '3.8'
 
 services:
-  # 🐘 PostgreSQL Service
+  # � FastAPI Backend Service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ai-sales-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: "postgresql+asyncpg://ai_sales_user:ai_sales_2024_secure@postgres:5432/ai_sales_db"
+      DATABASE_URL_SYNC: "postgresql://ai_sales_user:ai_sales_2024_secure@postgres:5432/ai_sales_db"
+      REDIS_URL: "redis://:redis_password_2024@redis:6379/0"
+      JWT_SECRET_KEY: "${JWT_SECRET_KEY:-sk-jwt-prod-2024-aiassistant-supersecret-key-change-in-production-8f7g9h2j3k4l5m6n}"
+      ENVIRONMENT: "production"
+      DEBUG: "false"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - ai_sales_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/docs"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    volumes:
+      - ./backend/data:/app/data
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+
+  # 🌐 Next.js Frontend Service
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ai-sales-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: "http://localhost:8000"
+    depends_on:
+      - backend
+    networks:
+      - ai_sales_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+
+  # �🐘 PostgreSQL Service
   postgres:
     image: postgres:16-alpine
     container_name: ai-sales-postgres
     restart: unless-stopped
     ports:
-      - "5433:5432"
+      - "5432:5432"
     environment:
       POSTGRES_DB: ai_sales_db
       POSTGRES_USER: ai_sales_user

@@ -1,8 +1,14 @@
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import field_validator
 from typing import List
 
 
 class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        case_sensitive=True,
+        extra="ignore",
+    )
     # Application
     APP_NAME: str = "AI Sales Assistant"
     ENVIRONMENT: str = "development"
@@ -20,11 +26,16 @@ class Settings(BaseSettings):
     REDIS_URL: str
     REDIS_MAX_CONNECTIONS: int = 50
     
-    # OpenAI
-    OPENAI_API_KEY: str
-    OPENAI_MODEL: str = "gpt-4-turbo-preview"
-    OPENAI_TEMPERATURE: float = 0.3
-    OPENAI_MAX_TOKENS: int = 1000
+    # === OpenRouter Config (au lieu d'OpenAI) ===
+    OPENROUTER_API_KEY: str
+    OPENROUTER_BASE_URL: str = "https://openrouter.ai/api/v1"
+    OPENROUTER_MODEL: str = "openai/gpt-4o-mini"  # Ou "anthropic/claude-3-sonnet"
+    
+    # === RAG Settings ===
+    EMBEDDING_MODEL: str = "sentence-transformers/all-MiniLM-L6-v2"  # Free, local
+    CHUNK_SIZE: int = 500
+    CHUNK_OVERLAP: int = 50
+    TOP_K_RESULTS: int = 5
     
     # Embeddings
     EMBEDDING_MODEL: str = "sentence-transformers/all-MiniLM-L6-v2"
@@ -36,6 +47,19 @@ class Settings(BaseSettings):
     RESEND_API_KEY: str
     FROM_EMAIL: str
     EMAIL_RESET_TOKEN_EXPIRE_HOURS: int = 1
+    
+    # CRM Integrations
+    # HubSpot
+    HUBSPOT_API_KEY: str = ""
+    HUBSPOT_CONTACT_LIST_ID: str = ""
+    
+    # Salesforce
+    SALESFORCE_INSTANCE: str = ""  # e.g., "na1.salesforce.com" for US
+    SALESFORCE_CLIENT_ID: str = ""
+    SALESFORCE_CLIENT_SECRET: str = ""
+    SALESFORCE_USERNAME: str = ""
+    SALESFORCE_PASSWORD: str = ""
+    SALESFORCE_SECURITY_TOKEN: str = ""
     
     # Security
     JWT_SECRET_KEY: str
@@ -52,11 +76,12 @@ class Settings(BaseSettings):
     ZOOM_ACCOUNT_ID: str = ""
     
     # CORS
-    CORS_ORIGINS: List[str] = ["http://localhost:3000"]
+    CORS_ORIGINS_STR: str = "http://localhost:3000"
     
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
+    @field_validator('CORS_ORIGINS_STR', mode='after')
+    @classmethod
+    def validate_cors(cls, v):
+        return v
 
 
 settings = Settings()

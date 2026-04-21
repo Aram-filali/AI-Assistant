@@ -23,6 +23,7 @@ langchain-openai==0.0.5
 # PDF Processing
 pypdf2==3.0.1
 python-docx==1.1.0
+beautifulsoup4==4.12.2
 markdown==3.5.2
 
 # Email
@@ -31,6 +32,7 @@ resend==0.7.0
 # Validation & Serialization
 pydantic==2.6.0
 pydantic-settings==2.1.0
+email-validator==2.1.0
 
 # Utils
 python-dotenv==1.0.0

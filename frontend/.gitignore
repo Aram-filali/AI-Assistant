@@ -1,6 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# dependencies
+# ==========================================
+# Dependencies
+# ==========================================
 /node_modules
 /.pnp
 .pnp.*
@@ -10,32 +12,99 @@
 !.yarn/releases
 !.yarn/versions
 
-# testing
+# ==========================================
+# Testing
+# ==========================================
 /coverage
+.jest_cache/
 
-# next.js
+# ==========================================
+# Next.js Build Artifacts
+# ==========================================
 /.next/
 /out/
-
-# production
 /build
+.next/
 
-# misc
-.DS_Store
-*.pem
+# ==========================================
+# Production Build
+# ==========================================
+/dist
 
-# debug
+# ==========================================
+# Logs
+# ==========================================
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+*.log
+logs/
 
-# env files (can opt-in for committing if needed)
-.env*
+# ==========================================
+# OS Files
+# ==========================================
+.DS_Store
+Thumbs.db
+*.pem
 
-# vercel
+# ==========================================
+# Environment Variables (CRITICAL - NEVER COMMIT!)
+# ==========================================
+.env
+.env.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+.env.staging
+.env.staging.local
+.env.production
+.env.production.local
+.env*.local
+.env.*.local
+**/.env
+**/.env.*
+
+# Keep .env.example as template for developers
+!.env.example
+!**/.env.example
+
+# ==========================================
+# IDEs & Editors
+# ==========================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+
+# ==========================================
+# Vercel
+# ==========================================
 .vercel
 
-# typescript
+# ==========================================
+# TypeScript
+# ==========================================
 *.tsbuildinfo
 next-env.d.ts
+
+# ==========================================
+# Misc
+# ==========================================
+.turbo/
+.env.local.backup
+.cache/
+
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+

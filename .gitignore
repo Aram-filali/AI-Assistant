@@ -48,33 +48,49 @@ build/
 # ==========================================
 # Environment Variables (IMPORTANT!)
 # ==========================================
+# Block all .env files (development, testing, production)
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+.env.staging.local
+.env.production
+.env.staging
+.env.test
+.env.dev
 *.env
+**/.env
+**/.env.*
 
-# Keep .env.example (template)
+# Keep .env.example (template for developers)
 !.env.example
 !backend/.env.example
+!frontend/.env.example
+!**/.env.example
 
 # ==========================================
-# Database
+# Data & Logs (Keep dirs, ignore content)
 # ==========================================
-*.db
-*.sqlite
-*.sqlite3
-*.db-shm
-*.db-wal
 
-# ==========================================
-# Data & Logs
-# ==========================================
+# Data files (keep structure only)
+backend/data/uploads/*
+backend/data/faiss_index/*.faiss
+backend/data/faiss_index/*.pkl
+backend/data/faiss_index/*.index
+
+# Keep the directory markers (.gitkeep preserves empty dirs)
+!backend/data/uploads/.gitkeep
+!backend/data/faiss_index/.gitkeep
+!backend/data/faiss_index/
+!backend/data/uploads/
+
+# Root data directories (structure only)
 data/documents/*
 data/faiss_index/*
 data/logs/*
 backups/*.sql
+backups/*.dump
 logs/
 *.log
 
@@ -83,6 +99,17 @@ logs/
 !data/faiss_index/.gitkeep
 !data/logs/.gitkeep
 !backups/.gitkeep
+
+# Database files & caches
+*.db
+*.sqlite
+*.sqlite3
+*.db-shm
+*.db-wal
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
 
 # ==========================================
 # Docker
@@ -125,9 +152,45 @@ htmlcov/
 .tox/
 
 # ==========================================
-# Alembic
+# SSL Certificates & Private Keys (CRITICAL!)
 # ==========================================
-# Keep migrations but not the cache
+*.pem
+*.key
+*.crt
+*.cert
+*.pfx
+*.p12
+*.cer
+
+# ==========================================
+# Backup Files
+# ==========================================
+*.bak
+*.backup
+*.tmp
+*~
+*.swp
+*.swo
+
+# ==========================================
+# OS Specific
+# ==========================================
+.AppleDouble
+.LSOverride
+._*
+
+# ==========================================
+# Others
+# ==========================================
+.mypy_cache/
+.dmypy.json
+dmypy.json
+*.sql
+.coverage.json
+coverage.xml
+.turbo/
+dist/
+build/
 alembic/__pycache__/
 alembic/versions/__pycache__/
 

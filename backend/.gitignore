@@ -1,0 +1,122 @@
+# Backend-specific .gitignore
+
+# ==========================================
+# Python / Virtual Environment
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+
+# ==========================================
+# Environment Variables (CRITICAL!)
+# ==========================================
+# NEVER commit these files - they contain secrets
+.env
+.env.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+.env.staging
+.env.staging.local
+.env.production
+.env.production.local
+*.env
+**/.env
+**/.env.*
+
+# Keep templates
+!.env.example
+
+# ==========================================
+# Database & Logs
+# ==========================================
+*.db
+*.sqlite
+*.sqlite3
+*.db-shm
+*.db-wal
+logs/
+*.log
+data/documents/*
+data/faiss_index/*
+data/uploads/*
+!data/documents/.gitkeep
+!data/faiss_index/.gitkeep
+!data/uploads/.gitkeep
+
+# ==========================================
+# Pytest & Testing
+# ==========================================
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+cover/
+
+# ==========================================
+# IDEs
+# ==========================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# ==========================================
+# OS Files
+# ==========================================
+.DS_Store
+Thumbs.db
+
+# ==========================================
+# Alembic migrations (optional - keep for production)
+# ==========================================
+# migrations/versions/__pycache__/
+
+# ==========================================
+# SSL Certificates & Private Keys
+# ==========================================
+*.pem
+*.key
+*.crt
+*.cert
+*.pfx
+
+# ==========================================
+# Misc
+# ==========================================
+.mypy_cache/
+.dmypy.json
+dmypy.json
+*.sql

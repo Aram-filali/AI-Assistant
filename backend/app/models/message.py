@@ -1,6 +1,6 @@
 """Message model"""
 
-from sqlalchemy import Column, String, Text, ForeignKey, JSON, Enum as SQLEnum
+from sqlalchemy import Column, String, Text, ForeignKey, JSON, Enum as SQLEnum, Boolean, Float
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 import enum
@@ -42,6 +42,10 @@ class Message(BaseModel):
         nullable=False,
         comment="Sources, confidence, tokens, etc."
     )
+    
+    sources = Column(JSON, nullable=True, comment="RAG source documents used")
+    rag_used = Column(Boolean, default=False, nullable=False, comment="RAG logic indicator")
+    retrieval_score = Column(Float, nullable=True)
     
     # Relationships
     conversation = relationship("Conversation", back_populates="messages")

@@ -36,5 +36,17 @@ class User(BaseModel):
         cascade="all, delete-orphan"
     )
     
+    knowledge_bases = relationship(
+        "KnowledgeBase",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+    
+    documents_rag = relationship(
+        "KnowledgeDocument",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+    
     def __repr__(self):
         return f"<User {self.email}>"
