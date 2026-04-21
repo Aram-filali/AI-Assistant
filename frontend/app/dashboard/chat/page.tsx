@@ -50,9 +50,10 @@ export default function ChatPage() {
         ...(conversationId && { conversation_id: conversationId })
       };
 
-      console.log('Sending chat request:', { url: 'http://localhost:8001/chat/ask', body: requestBody, hasToken: !!token });
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+      console.log('Sending chat request:', { url: `${API_BASE}/chat/ask`, body: requestBody, hasToken: !!token });
 
-      const response = await fetch('http://localhost:8001/chat/ask', {
+      const response = await fetch(`${API_BASE}/chat/ask`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

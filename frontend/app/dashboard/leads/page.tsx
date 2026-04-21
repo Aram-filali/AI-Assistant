@@ -77,7 +77,8 @@ export default function LeadsPage() {
       if (search) params.append('search', search);
       if (statusFilter) params.append('status', statusFilter);
 
-      const response = await fetch(`http://localhost:8001/admin/leads?${params}`, {
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+      const response = await fetch(`${API_BASE}/admin/leads?${params}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

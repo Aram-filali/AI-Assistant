@@ -23,7 +23,8 @@ export default function LoginPage() {
       formData.append('username', email); // FastAPI OAuth2 expects 'username'
       formData.append('password', password);
 
-      const response = await fetch('http://localhost:8001/auth/login', {
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+      const response = await fetch(`${API_BASE}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -39,7 +40,7 @@ export default function LoginPage() {
       console.log('Login response:', data);
       
       // Now fetch user info with role
-      const meResponse = await fetch('http://localhost:8001/auth/me', {
+      const meResponse = await fetch(`${API_BASE}/auth/me`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${data.access_token}`,

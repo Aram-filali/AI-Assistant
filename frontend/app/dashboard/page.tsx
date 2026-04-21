@@ -36,7 +36,8 @@ export default function DashboardPage() {
       setLoading(true);
       setError('');
       
-      const response = await fetch('http://localhost:8001/admin/analytics/leads', {
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+      const response = await fetch(`${API_BASE}/admin/analytics/leads`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
