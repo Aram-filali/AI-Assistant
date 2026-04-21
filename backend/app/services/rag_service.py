@@ -456,5 +456,20 @@ class RAGService:
         }
 
 
-# Global instance
-rag_service = RAGService()
+# Lazy-loaded global instance (avoids blocking at startup)
+_rag_service_instance = None
+
+def get_rag_service() -> RAGService:
+    """Get or create RAG service singleton (lazy loading)"""
+    global _rag_service_instance
+    if _rag_service_instance is None:
+        logger.info("Initializing RAG Service (lazy loading)...")
+        _rag_service_instance = RAGService()
+    return _rag_service_instance
+
+# Backward-compatible proxy - acts like the service
+class _RAGServiceProxy:
+    def __getattr__(self, name):
+        return getattr(get_rag_service(), name)
+
+rag_service = _RAGServiceProxy()
