@@ -19,6 +19,16 @@ from app.api import auth, chat, knowledge, actions, admin
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# ==================== DATABASE INITIALIZATION ====================
+# Initialize database tables BEFORE starting the app
+logger.info("🚀 Initializing Database...")
+try:
+    from app.core.init_db import init_database
+    init_database()
+except Exception as e:
+    logger.error(f"❌ Database initialization failed: {e}")
+    raise
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
