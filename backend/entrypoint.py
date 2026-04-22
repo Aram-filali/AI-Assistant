@@ -10,39 +10,49 @@ from pathlib import Path
 
 def run_migrations():
     """Run Alembic migrations."""
-    print("=" * 50)
-    print("🚀 Starting Database Migrations")
-    print("=" * 50)
-    print()
+    print("=" * 60, flush=True)
+    print("🚀 Starting Database Migrations", flush=True)
+    print("=" * 60, flush=True)
+    print(flush=True)
     
     try:
-        result = subprocess.run(
+        # Run alembic with subprocess, capturing output
+        process = subprocess.Popen(
             ["alembic", "upgrade", "head"],
             cwd="/app",
-            check=False
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=1
         )
         
-        if result.returncode == 0:
-            print()
-            print("=" * 50)
-            print("✅ Migrations COMPLETED successfully!")
-            print("=" * 50)
-            print()
+        # Print output line by line as it comes
+        for line in process.stdout:
+            print(line, end='', flush=True)
+        
+        returncode = process.wait()
+        
+        if returncode == 0:
+            print(flush=True)
+            print("=" * 60, flush=True)
+            print("✅ Migrations COMPLETED successfully!", flush=True)
+            print("=" * 60, flush=True)
+            print(flush=True)
         else:
-            print()
-            print("=" * 50)
-            print("❌ Migrations FAILED!")
-            print("=" * 50)
+            print(flush=True)
+            print("=" * 60, flush=True)
+            print("❌ Migrations FAILED!", flush=True)
+            print("=" * 60, flush=True)
             sys.exit(1)
             
     except Exception as e:
-        print(f"❌ Error running migrations: {e}")
+        print(f"❌ Error running migrations: {e}", flush=True)
         sys.exit(1)
 
 def start_uvicorn():
     """Start Uvicorn application server."""
-    print("🚀 Starting FastAPI application...")
-    print()
+    print("🚀 Starting FastAPI application...", flush=True)
+    print(flush=True)
     
     os.execvp("uvicorn", [
         "uvicorn",
@@ -54,3 +64,4 @@ def start_uvicorn():
 if __name__ == "__main__":
     run_migrations()
     start_uvicorn()
+
