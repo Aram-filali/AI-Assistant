@@ -3,7 +3,7 @@ Initialize database tables by creating them directly with SQLAlchemy.
 This bypasses Alembic and ensures tables exist before the app starts.
 """
 import logging
-from sqlalchemy import create_engine, inspect
+from sqlalchemy import create_engine, inspect, text
 from app.core.config import settings
 from app.models.base import Base
 
@@ -33,11 +33,18 @@ def init_database():
             pool_recycle=3600
         )
         
+        # Create the "app" schema if it doesn't exist
+        with engine.connect() as conn:
+            print("📋 Creating 'app' schema if it doesn't exist...")
+            conn.execute(text('CREATE SCHEMA IF NOT EXISTS app'))
+            conn.commit()
+            print("   ✓ Schema ready")
+        
         # Check which tables already exist
         inspector = inspect(engine)
-        existing_tables = inspector.get_table_names()
+        existing_tables = inspector.get_table_names(schema="app")
         
-        print(f"   Found {len(existing_tables)} existing tables: {existing_tables}")
+        print(f"   Found {len(existing_tables)} existing tables in 'app' schema: {existing_tables}")
         print()
         
         # Create all tables from models
@@ -46,10 +53,10 @@ def init_database():
         
         # Check again after creation
         inspector = inspect(engine)
-        final_tables = inspector.get_table_names()
+        final_tables = inspector.get_table_names(schema="app")
         
         print()
-        print(f"✅ Database now has {len(final_tables)} tables: {final_tables}")
+        print(f"✅ Database now has {len(final_tables)} tables in 'app' schema: {final_tables}")
         print()
         print("=" * 60)
         print("✅ Database Initialization COMPLETED successfully!")
