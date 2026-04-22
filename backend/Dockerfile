@@ -18,12 +18,9 @@ COPY --from=builder /root/.local /root/.local
 # Copy application code
 COPY . .
 
-# Make the migration script executable
-RUN chmod +x migrate.sh
-
 # Set PATH
 ENV PATH=/root/.local/bin:$PATH
 ENV PYTHONUNBUFFERED=1
 
-# Run the migration script which handles DB init and app startup
-CMD ["bash", "./migrate.sh"]
+# Run migrations at startup, then start the application
+CMD sh -c 'echo "======================================" && echo "🚀 Starting Database Migrations" && echo "======================================" && alembic upgrade head && echo "✅ Migrations completed!" && echo "" && echo "🚀 Starting FastAPI application..." && exec uvicorn app.main:app --host 0.0.0.0 --port 8000'
