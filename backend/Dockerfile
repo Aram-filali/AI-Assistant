@@ -22,5 +22,5 @@ COPY . .
 ENV PATH=/root/.local/bin:$PATH
 ENV PYTHONUNBUFFERED=1
 
-# Run entrypoint which handles migrations and starts the app
-ENTRYPOINT ["python", "entrypoint.py"]
+# Run entrypoint which initializes database and starts the app
+CMD ["python", "entrypoint.py"]

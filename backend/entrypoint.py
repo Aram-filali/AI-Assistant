@@ -1,52 +1,29 @@
 #!/usr/bin/env python3
 """
 Entrypoint for Railway deployment.
-Runs migrations, then starts Uvicorn.
+Initializes database, then starts Uvicorn.
 """
 import subprocess
 import sys
 import os
-from pathlib import Path
 
-def run_migrations():
-    """Run Alembic migrations."""
+def init_database():
+    """Initialize database by creating tables."""
     print("=" * 60, flush=True)
-    print("🚀 Starting Database Migrations", flush=True)
+    print("🚀 Starting Database Initialization", flush=True)
     print("=" * 60, flush=True)
     print(flush=True)
     
     try:
-        # Run alembic with subprocess, capturing output
-        process = subprocess.Popen(
-            ["alembic", "upgrade", "head"],
-            cwd="/app",
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
-            bufsize=1
-        )
+        # Import and run the init_db function
+        from app.core.init_db import init_database as create_tables
+        create_tables()
         
-        # Print output line by line as it comes
-        for line in process.stdout:
-            print(line, end='', flush=True)
-        
-        returncode = process.wait()
-        
-        if returncode == 0:
-            print(flush=True)
-            print("=" * 60, flush=True)
-            print("✅ Migrations COMPLETED successfully!", flush=True)
-            print("=" * 60, flush=True)
-            print(flush=True)
-        else:
-            print(flush=True)
-            print("=" * 60, flush=True)
-            print("❌ Migrations FAILED!", flush=True)
-            print("=" * 60, flush=True)
-            sys.exit(1)
-            
     except Exception as e:
-        print(f"❌ Error running migrations: {e}", flush=True)
+        print(flush=True)
+        print("=" * 60, flush=True)
+        print(f"❌ Database Initialization FAILED: {e}", flush=True)
+        print("=" * 60, flush=True)
         sys.exit(1)
 
 def start_uvicorn():
@@ -62,6 +39,6 @@ def start_uvicorn():
     ])
 
 if __name__ == "__main__":
-    run_migrations()
+    init_database()
     start_uvicorn()
 
