@@ -36,6 +36,7 @@ class Settings(BaseSettings):
     CHUNK_SIZE: int = 500
     CHUNK_OVERLAP: int = 50
     TOP_K_RESULTS: int = 5
+    DEFAULT_PUBLIC_KB_ID: str | None = None  # Default KB for public chat (if not provided)
     
     # Embeddings
     EMBEDDING_MODEL: str = "sentence-transformers/all-MiniLM-L6-v2"

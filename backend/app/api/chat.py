@@ -310,10 +310,12 @@ async def ask_question_public(
     """
     try:
         # ✨ KB ISOLATION CHECK: Ensure all public queries are scoped to a specific KB
-        if not chat_request.knowledge_base_id:
+        kb_id = chat_request.knowledge_base_id or settings.DEFAULT_PUBLIC_KB_ID
+        
+        if not kb_id:
             raise HTTPException(
                 status_code=400,
-                detail="public chat requires knowledge_base_id parameter for data isolation"
+                detail="public chat requires knowledge_base_id parameter or DEFAULT_PUBLIC_KB_ID to be configured"
             )
         
         from app.services.lead_service import LeadCaptureService
@@ -379,7 +381,7 @@ async def ask_question_public(
         # ✨ STEP 6: Call RAG service to get answer
         rag_response = await rag_service.query(
             question=chat_request.question,
-            knowledge_base_id=str(chat_request.knowledge_base_id) if chat_request.knowledge_base_id else None,
+            knowledge_base_id=str(kb_id) if kb_id else None,
             top_k=chat_request.top_k,
             include_sources=True
         )
