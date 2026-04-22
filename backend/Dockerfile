@@ -22,5 +22,5 @@ COPY . .
 ENV PATH=/root/.local/bin:$PATH
 ENV PYTHONUNBUFFERED=1
 
-# Run migrations at startup, then start the application
-CMD sh -c 'echo "======================================" && echo "🚀 Starting Database Migrations" && echo "======================================" && alembic upgrade head && echo "✅ Migrations completed!" && echo "" && echo "🚀 Starting FastAPI application..." && exec uvicorn app.main:app --host 0.0.0.0 --port 8000'
+# Run entrypoint which handles migrations and starts the app
+ENTRYPOINT ["python", "entrypoint.py"]
