@@ -23,4 +23,5 @@ ENV PATH=/root/.local/bin:$PATH
 ENV PYTHONUNBUFFERED=1
 
 # Run entrypoint which initializes database and starts the app
-CMD ["python", "entrypoint.py"]
+# Initialize DB then start the app - all in one command
+CMD sh -c 'python -c "from app.core.init_db import init_database; init_database()" && exec uvicorn app.main:app --host 0.0.0.0 --port 8000'
